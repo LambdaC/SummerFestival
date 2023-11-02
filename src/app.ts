@@ -2,12 +2,12 @@ import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
 
-import { Engine, Scene, Vector3, Mesh, Color3, Color4, ShadowGenerator, GlowLayer, PointLight, FreeCamera, CubeTexture, Sound, PostProcess, Effect, SceneLoader, Matrix, MeshBuilder, Quaternion, AssetsManager, EngineFactory } from "@babylonjs/core";
-import { PlayerInput } from "./inputController";
+import { Color3, Color4, CubeTexture, Effect, Engine, EngineFactory, FreeCamera, GlowLayer, Matrix, Mesh, MeshBuilder, PointLight, PostProcess, Quaternion, Scene, SceneLoader, ShadowGenerator, Sound, Vector3 } from "@babylonjs/core";
+import { AdvancedDynamicTexture, Button, Control, Image, Rectangle, StackPanel, TextBlock } from "@babylonjs/gui";
 import { Player } from "./characterController";
-import { Hud } from "./ui";
-import { AdvancedDynamicTexture, StackPanel, Button, TextBlock, Rectangle, Control, Image } from "@babylonjs/gui";
 import { Environment } from "./environment";
+import { PlayerInput } from "./inputController";
+import { Hud } from "./ui";
 
 //enum for states
 enum State { START = 0, GAME = 1, LOSE = 2, CUTSCENE = 3 }
@@ -128,7 +128,7 @@ class App {
 
         return this._canvas;
     }
-    
+
     // goToStart
     private async _goToStart() {
         this._engine.displayLoadingUI(); //make sure to wait for start to load
@@ -203,7 +203,7 @@ class App {
         scene.registerBeforeRender(() => {
             if (this._transition) {
                 fadeLevel -= .05;
-                if(fadeLevel <= 0){
+                if (fadeLevel <= 0) {
                     this._goToCutScene();
                     this._transition = false;
                 }
@@ -416,7 +416,7 @@ class App {
 
         //looping animation for the dialogue background
         let dialogueTimer = setInterval(() => {
-            if(finished_anim && dialogueBg.cellId < 3){
+            if (finished_anim && dialogueBg.cellId < 3) {
                 dialogueBg.cellId++;
             } else {
                 dialogueBg.cellId = 0;
@@ -436,7 +436,7 @@ class App {
         skipBtn.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
         cutScene.addControl(skipBtn);
 
-        skipBtn.onPointerDownObservable.add(()=> {
+        skipBtn.onPointerDownObservable.add(() => {
             this._cutScene.detachControl();
             clearInterval(animTimer);
             clearInterval(anim2Timer);
@@ -451,15 +451,15 @@ class App {
         let anim = 1; //keeps track of which animation we're playing
         //sets up the state machines for animations
         this._cutScene.onBeforeRenderObservable.add(() => {
-            if(anims_loaded == 8) {
+            if (anims_loaded == 8) {
                 this._engine.hideLoadingUI();
                 anims_loaded = 0;
 
                 //animation sequence
                 animTimer = setInterval(() => {
-                    switch(anim) {
+                    switch (anim) {
                         case 1:
-                            if(beginning_anim.cellId == 9){ //each animation could have a different number of frames
+                            if (beginning_anim.cellId == 9) { //each animation could have a different number of frames
                                 anim++;
                                 beginning_anim.isVisible = false; // current animation hidden
                                 working_anim.isVisible = true; // show the next animation
@@ -468,7 +468,7 @@ class App {
                             }
                             break;
                         case 2:
-                            if(working_anim.cellId == 11){
+                            if (working_anim.cellId == 11) {
                                 anim++;
                                 working_anim.isVisible = false;
                                 dropoff_anim.isVisible = true;
@@ -477,7 +477,7 @@ class App {
                             }
                             break;
                         case 3:
-                            if(dropoff_anim.cellId == 11){
+                            if (dropoff_anim.cellId == 11) {
                                 anim++;
                                 dropoff_anim.isVisible = false;
                                 leaving_anim.isVisible = true;
@@ -486,7 +486,7 @@ class App {
                             }
                             break;
                         case 4:
-                            if(leaving_anim.cellId == 9){
+                            if (leaving_anim.cellId == 9) {
                                 anim++;
                                 leaving_anim.isVisible = false;
                                 watermelon_anim.isVisible = true;
@@ -496,14 +496,14 @@ class App {
                             break;
                         default:
                             break;
-                    }   
+                    }
                 }, 250);
 
                 //animation sequence 2 that uses a different time interval
                 anim2Timer = setInterval(() => {
-                    switch(anim) {
+                    switch (anim) {
                         case 5:
-                            if(watermelon_anim.cellId == 8){
+                            if (watermelon_anim.cellId == 8) {
                                 anim++;
                                 watermelon_anim.isVisible = false;
                                 reading_anim.isVisible = true;
@@ -512,7 +512,7 @@ class App {
                             }
                             break;
                         case 6:
-                            if(reading_anim.cellId == 11){
+                            if (reading_anim.cellId == 11) {
                                 reading_anim.isVisible = false;
                                 finished_anim = true;
                                 dialogueBg.isVisible = true;
@@ -527,7 +527,7 @@ class App {
             }
 
             //only once all of the game assets have finished loading and you've completed the animation sequence + dialogue can you go to the game state
-            if(finishedLoading && canplay) {
+            if (finishedLoading && canplay) {
                 canplay = false;
                 this._goToGame();
             }
@@ -552,7 +552,7 @@ class App {
                 this._engine.displayLoadingUI(); //if the game hasn't loaded yet, we'll see a loading screen
                 transition = 0;
                 canplay = true;
-            } else if(transition < 8){ // 8 frames of dialogue
+            } else if (transition < 8) { // 8 frames of dialogue
                 transition++;
                 dialogue.cellId++;
             }
@@ -566,9 +566,9 @@ class App {
 
         //--START LOADING AND SETTING UP THE GAME DURING THIS SCENE--
         var finishedLoading = false;
-        await this._setUpGame().then(res =>{
+        await this._setUpGame().then(res => {
             finishedLoading = true;
-            
+
         });
     }
 
@@ -593,7 +593,7 @@ class App {
 
         this.game = new Sound("gameSong", "./sounds/Christmassynths.wav", scene, function () {
         }, {
-            loop:true,
+            loop: true,
             volume: 0.1
         });
 
@@ -605,7 +605,7 @@ class App {
 
     //goToGame
     private async _goToGame(): Promise<void> {
-        
+
         //--SETUP SCENE--
         this._scene.detachControl();
         let scene = this._gamescene;
@@ -637,7 +637,7 @@ class App {
         //set up the game timer and sparkler timer -- linked to the ui
         this._ui.startTimer();
         this._ui.startSparklerTimer(this._player.sparkler);
-        
+
         //get rid of start scene, switch to gamescene and change states
         this._scene.dispose();
         this._state = State.GAME;
@@ -689,7 +689,7 @@ class App {
         music.fontSize = 22;
         music.resizeToFit = true;
         music.textWrapping = true;
-        
+
         const source = new TextBlock("sources", "Sources: freesound.org, opengameart.org, and itch.io")
         source.textWrapping = true;
         source.resizeToFit = true;
@@ -702,7 +702,7 @@ class App {
         walkCred.textWrapping = true;
         walkCred.resizeToFit = true;
 
-        const gameCred = new TextBlock("gameSong", "Christmas synths by 3xBlast - opengameart.org"); 
+        const gameCred = new TextBlock("gameSong", "Christmas synths by 3xBlast - opengameart.org");
         gameCred.textWrapping = true;
         gameCred.resizeToFit = true;
 
@@ -841,8 +841,8 @@ class App {
         scene.registerBeforeRender(() => {
             if (this._transition) {
                 fadeLevel -= .05;
-                if(fadeLevel <= 0){
-                    
+                if (fadeLevel <= 0) {
+
                     this._goToStart();
                     this._transition = false;
                 }
@@ -854,10 +854,10 @@ class App {
             //todo: add fade transition & selection sfx
             scene.detachControl();
             guiMenu.dispose();
-            
+
             this._transition = true;
             sfx.play();
-            
+
         });
 
         //--SCENE FINISHED LOADING--
@@ -886,9 +886,9 @@ class App {
             outer.ellipsoidOffset = new Vector3(0, 1.5, 0);
 
             outer.rotationQuaternion = new Quaternion(0, 1, 0, 0); // rotate the player mesh 180 since we want to see the back of the player
-            
+
             //--IMPORTING MESH--
-            return SceneLoader.ImportMeshAsync(null, "./models/", "player.glb", scene).then((result) =>{
+            return SceneLoader.ImportMeshAsync(null, "./models/", "player.glb", scene).then((result) => {
                 const root = result.meshes[0];
                 //body is our actual player mesh
                 const body = root;
@@ -897,7 +897,7 @@ class App {
                 body.getChildMeshes().forEach(m => {
                     m.isPickable = false;
                 })
-                
+
                 //return the mesh and animations
                 return {
                     mesh: outer as Mesh,
@@ -939,7 +939,7 @@ class App {
                 this._ui.fadeLevel -= .05;
 
                 //once the fade transition has complete, switch scenes
-                if(this._ui.fadeLevel <= 0) {
+                if (this._ui.fadeLevel <= 0) {
                     this._ui.quit = true;
                     this._ui.transition = false;
                 }
@@ -983,9 +983,9 @@ class App {
                 this._ui.updateHud();
             }
             //if the player has attempted all tutorial moves, move on to the hint IF they haven't already lit the next lantern
-            if(this._player.tutorial_move && this._player.tutorial_jump && this._player.tutorial_dash && (this._ui.tutorial.isVisible || this._ui.hint.isVisible)){
+            if (this._player.tutorial_move && this._player.tutorial_jump && this._player.tutorial_dash && (this._ui.tutorial.isVisible || this._ui.hint.isVisible)) {
                 this._ui.tutorial.isVisible = false;
-                if(!this._environment._lanternObjs[1].isLit){ // if the first lantern hasn't been lit, then give hint as to which direction to go
+                if (!this._environment._lanternObjs[1].isLit) { // if the first lantern hasn't been lit, then give hint as to which direction to go
                     this._ui.hint.isVisible = true;
                 } else {
                     this._ui.hint.isVisible = false;
