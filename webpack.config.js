@@ -54,4 +54,8 @@ module.exports = {
     new CleanWebpackPlugin(),
   ],
   mode: "development",
+
+  devServer: {
+    port: 9000,
+  }
 };
